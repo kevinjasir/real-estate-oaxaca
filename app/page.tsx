@@ -4,8 +4,9 @@ import ProjectCard from "./components/ProjectCard";
 import TrustSection from "./components/TrustSection";
 import CTASection from "./components/CTASection";
 import Footer from "./components/Footer";
+import { createClient } from "@/lib/supabase/server";
 
-// Type definitions for API response
+// Type definitions for project display
 type Project = {
   id: string;
   name: string;
@@ -14,22 +15,55 @@ type Project = {
   hero_image: string | null;
   gallery: string[];
   featured?: boolean;
+  location_name?: string;
+  city?: string;
 };
 
-// Fetch projects from API with error handling
+// Fetch projects directly from Supabase (server component)
 async function getProjects(): Promise<Project[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/projects`, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds for fresh data
-    });
+    const supabase = await createClient();
 
-    if (!res.ok) {
-      console.error("Failed to fetch projects:", res.status);
+    const { data: projects, error: projectsError } = await supabase
+      .from("projects")
+      .select(`
+        id,
+        name,
+        slug,
+        description,
+        featured,
+        location_name,
+        city
+      `)
+      .eq("status", "active")
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(6);
+
+    if (projectsError || !projects) {
+      console.error("Error fetching projects:", projectsError);
       return [];
     }
 
-    return res.json();
+    const projectIds = projects.map((p) => p.id);
+
+    // Fetch media for projects
+    const { data: media } = await supabase
+      .from("media")
+      .select("entity_id, url, order_index")
+      .eq("entity_type", "project")
+      .in("entity_id", projectIds)
+      .order("order_index", { ascending: true });
+
+    // Merge projects with media
+    return projects.map((project) => {
+      const projectMedia = media?.filter((m) => m.entity_id === project.id) || [];
+      return {
+        ...project,
+        hero_image: projectMedia[0]?.url || null,
+        gallery: projectMedia.map((m) => m.url),
+      };
+    });
   } catch (error) {
     console.error("Error fetching projects:", error);
     return [];
