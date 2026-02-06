@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import ImageGallery from "@/app/components/ImageGallery";
 
 type PageParams = {
   params: Promise<{ slug: string }>;
@@ -298,42 +299,7 @@ export default async function ProjectDetailPage({ params, searchParams }: PagePa
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">
                     Galería
                   </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {project.gallery.map((media, index) => {
-                      const isVideo = ['.mp4', '.webm', '.mov', '.avi', '.mkv'].some(ext => media.toLowerCase().includes(ext));
-                      return (
-                        <div
-                          key={index}
-                          className="relative aspect-video rounded-lg overflow-hidden group"
-                        >
-                          {isVideo ? (
-                            <>
-                              <video
-                                src={media}
-                                className="w-full h-full object-cover"
-                                controls
-                                preload="metadata"
-                                playsInline
-                              />
-                              <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1 pointer-events-none">
-                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M8 5v14l11-7z" />
-                                </svg>
-                                Video
-                              </div>
-                            </>
-                          ) : (
-                            <Image
-                              src={media}
-                              alt={`${project.name} - Imagen ${index + 1}`}
-                              fill
-                              className="object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <ImageGallery images={project.gallery} projectName={project.name} />
                 </div>
               )}
 

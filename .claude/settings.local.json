@@ -68,7 +68,8 @@
       "Bash(__NEW_LINE_b42a3b4bde7f0e96__ echo \"=== Lotes en DEV ===\")",
       "Bash(__NEW_LINE_b42a3b4bde7f0e96__ echo \"\")",
       "Bash(fi)",
-      "Bash(# Buscar el token en otra ubicación find ~ -name \"\"auth.json\"\" -path \"\"*vercel*\"\")"
+      "Bash(# Buscar el token en otra ubicación find ~ -name \"\"auth.json\"\" -path \"\"*vercel*\"\")",
+      "Bash(PGPASSWORD=\"oyfrPOK0ehUxexoZ\" psql:*)"
     ]
   }
 }
