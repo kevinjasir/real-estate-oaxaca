@@ -109,11 +109,29 @@ export default function ConfiguracionPage() {
 
   const loadContactConfig = async () => {
     try {
-      const { data, error } = await supabase
+      // First try contact_email
+      let { data, error } = await supabase
         .from("site_settings")
         .select("*")
         .eq("key", "contact_email")
         .single();
+
+      // Fallback to company_email if contact_email not found
+      if (!data || error) {
+        const { data: companyData } = await supabase
+          .from("site_settings")
+          .select("*")
+          .eq("key", "company_email")
+          .single();
+
+        if (companyData) {
+          // company_email stores value as direct string
+          const val = companyData.value as unknown;
+          const emailStr = typeof val === 'string' ? val.replace(/^"|"$/g, '') : '';
+          setContactConfig({ email: emailStr });
+          return;
+        }
+      }
 
       if (data && !error) {
         const value = data.value as unknown as ContactConfig;
@@ -121,7 +139,7 @@ export default function ConfiguracionPage() {
           email: value?.email || "",
         });
       } else {
-        // Try to get email from super_admin user
+        // Try to get email from super_admin user as last resort
         const { data: adminUser } = await supabase
           .from("users")
           .select("email")
