@@ -6,7 +6,6 @@ import Image from "next/image";
 
 interface User {
   id: string;
-  auth_id: string;
   email: string;
   full_name: string | null;
   avatar_url: string | null;
@@ -61,7 +60,7 @@ export default function UsuariosPage() {
     try {
       const { error } = await supabase
         .from("users")
-        .update({ role: newRole, updated_at: new Date().toISOString() })
+        .update({ role: newRole as "agent" | "admin" | "super_admin", updated_at: new Date().toISOString() })
         .eq("id", userId);
 
       if (error) throw error;

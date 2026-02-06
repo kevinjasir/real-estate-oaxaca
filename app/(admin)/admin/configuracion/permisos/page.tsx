@@ -1,12 +1,37 @@
 "use client";
 
+interface Screen {
+  name: string;
+  path: string;
+  description: string;
+  roles: string[];
+  notes?: string;
+}
+
+interface Section {
+  section: string;
+  screens: Screen[];
+}
+
+interface Action {
+  name: string;
+  description?: string;
+  roles: string[];
+  notes?: string;
+}
+
+interface ActionSection {
+  section: string;
+  actions: Action[];
+}
+
 const ROLES = [
   { id: "super_admin", name: "Super Admin", color: "bg-purple-100 text-purple-700" },
   { id: "admin", name: "Admin", color: "bg-blue-100 text-blue-700" },
   { id: "agent", name: "Agente", color: "bg-emerald-100 text-emerald-700" },
 ];
 
-const SCREENS = [
+const SCREENS: Section[] = [
   {
     section: "Panel Principal",
     screens: [
@@ -89,7 +114,7 @@ const SCREENS = [
   },
 ];
 
-const ACTIONS = [
+const ACTIONS: ActionSection[] = [
   {
     section: "Lotes",
     actions: [

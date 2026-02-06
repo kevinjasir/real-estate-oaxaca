@@ -29,7 +29,7 @@ export async function GET() {
         features,
         meta_title,
         meta_description,
-        cover_image_url
+        featured
       `)
       .eq("status", "active")
       .order("featured", { ascending: false })
@@ -69,7 +69,7 @@ export async function GET() {
 
       return {
         ...project,
-        hero_image: project.cover_image_url || projectMedia[0]?.url || null,
+        hero_image: projectMedia[0]?.url || null,
         gallery: projectMedia.map((m) => m.url),
         lots_count: project.total_lots || 0,
         available_lots_count: project.available_lots || 0,

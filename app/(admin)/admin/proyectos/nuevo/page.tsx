@@ -123,7 +123,13 @@ export default function NuevoProyectoPage() {
 
       const { data, error: insertError } = await supabase
         .from("projects")
-        .insert(projectData)
+        .insert({
+          ...projectData,
+          status: projectData.status as "active" | "inactive",
+          city_id: "",
+          state_id: "",
+          country_id: "",
+        })
         .select()
         .single();
 

@@ -8,17 +8,16 @@ import Link from "next/link";
 interface Lot {
   id: string;
   lot_number: string;
-  block: string | null;
-  area_m2: number;
-  price: number;
-  status: "available" | "reserved" | "sold" | "pending_review";
+  size_m2: number | null;
+  price: number | null;
+  status: "available" | "reserved" | "sold" | "pending_review" | null;
 }
 
 interface Project {
   id: string;
   name: string;
   slug: string;
-  location_name: string;
+  location_name: string | null;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -72,7 +71,7 @@ export default function MiProyectoDetallePage() {
     // Cargar lotes
     const { data: lotsData, error: lotsError } = await supabase
       .from("lots")
-      .select("id, lot_number, block, area_m2, price, status")
+      .select("id, lot_number, size_m2, price, status")
       .eq("project_id", projectData.id)
       .order("lot_number", { ascending: true });
 
@@ -91,7 +90,7 @@ export default function MiProyectoDetallePage() {
 
     const { error } = await supabase
       .from("lots")
-      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .update({ status: newStatus as "available" | "reserved" | "sold", updated_at: new Date().toISOString() })
       .eq("id", lotId);
 
     if (error) {
@@ -99,14 +98,15 @@ export default function MiProyectoDetallePage() {
       setMessage({ type: "error", text: "Error al actualizar el estado" });
     } else {
       setLots(lots.map((l) => (l.id === lotId ? { ...l, status: newStatus } : l)));
-      setMessage({ type: "success", text: `Lote actualizado a "${STATUS_LABELS[newStatus]}"` });
+      setMessage({ type: "success", text: `Lote actualizado a "${STATUS_LABELS[newStatus || "available"]}"` });
       setTimeout(() => setMessage(null), 3000);
     }
 
     setUpdating(null);
   };
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price: number | null) => {
+    if (price === null) return "$0";
     return new Intl.NumberFormat("es-MX", {
       style: "currency",
       currency: "MXN",
@@ -236,12 +236,11 @@ export default function MiProyectoDetallePage() {
             {filteredLots.map((lot) => (
               <div
                 key={lot.id}
-                className={`relative p-4 rounded-lg border-2 ${STATUS_COLORS[lot.status]} transition-all`}
+                className={`relative p-4 rounded-lg border-2 ${STATUS_COLORS[lot.status || "available"]} transition-all`}
               >
                 {/* Lot Number */}
                 <div className="text-center mb-3">
                   <span className="text-lg font-bold">
-                    {lot.block ? `${lot.block}-` : ""}
                     {lot.lot_number}
                   </span>
                 </div>
@@ -249,7 +248,7 @@ export default function MiProyectoDetallePage() {
                 {/* Info */}
                 <div className="text-xs space-y-1 mb-3">
                   <p>
-                    <span className="text-gray-500">Área:</span> {lot.area_m2} m²
+                    <span className="text-gray-500">Área:</span> {lot.size_m2 || 0} m²
                   </p>
                   <p>
                     <span className="text-gray-500">Precio:</span> {formatPrice(lot.price)}
@@ -258,12 +257,12 @@ export default function MiProyectoDetallePage() {
 
                 {/* Status Selector */}
                 <select
-                  value={lot.status}
+                  value={lot.status || "available"}
                   onChange={(e) => handleStatusChange(lot.id, e.target.value as Lot["status"])}
                   disabled={updating === lot.id || lot.status === "pending_review"}
                   className={`w-full text-xs font-medium px-2 py-1.5 rounded border-0 cursor-pointer ${
                     updating === lot.id || lot.status === "pending_review" ? "opacity-50" : ""
-                  } ${STATUS_COLORS[lot.status]}`}
+                  } ${STATUS_COLORS[lot.status || "available"]}`}
                 >
                   {lot.status === "sold" ? (
                     <>

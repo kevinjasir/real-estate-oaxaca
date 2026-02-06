@@ -84,7 +84,7 @@ export default function AsignacionesPage() {
     }
 
     setAgents(agentsData || []);
-    setProjects(projectsData || []);
+    setProjects(projectsData as unknown as Project[] || []);
     setAssignments(assignmentsData as unknown as Assignment[] || []);
     setLoading(false);
   };

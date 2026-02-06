@@ -78,7 +78,7 @@ export async function GET(request: Request, { params }: RouteParams) {
     const result = {
       ...project,
       address_text: project.address || null,
-      hero_image: project.cover_image_url || media?.[0]?.url || null,
+      hero_image: (project as Record<string, unknown>).cover_image_url || media?.[0]?.url || null,
       gallery: media?.map((m) => m.url) || [],
       lots: lots || [],
       lots_count: lots?.length || 0,

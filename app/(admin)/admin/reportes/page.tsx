@@ -89,7 +89,7 @@ async function getProjectMetrics(): Promise<ProjectMetrics[]> {
     const availableLots = lots?.filter((l) => l.status === "available").length || 0;
     const soldLots = lots?.filter((l) => l.status === "sold").length || 0;
     const reservedLots = lots?.filter((l) => l.status === "reserved").length || 0;
-    const pendingReviewLots = lots?.filter((l) => l.status === "pending_review").length || 0;
+    const pendingReviewLots = lots?.filter((l) => (l.status as string) === "pending_review").length || 0;
 
     metrics.push({
       id: project.id,

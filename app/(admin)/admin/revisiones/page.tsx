@@ -43,7 +43,7 @@ export default function RevisionesPage() {
         status,
         project:projects(id, name, slug)
       `)
-      .eq("status", "pending_review")
+      .eq("status", "pending_review" as unknown as "available")
       .order("updated_at", { ascending: false });
 
     if (error) {

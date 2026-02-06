@@ -8,7 +8,7 @@ interface UserData {
   email: string;
   full_name: string;
   avatar_url: string | null;
-  role: "super_admin" | "admin" | "agent" | "client";
+  role: "super_admin" | "admin" | "agent";
   active: boolean;
 }
 
@@ -34,7 +34,7 @@ export default async function AdminLayout({
     .eq("id", user.id)
     .single();
 
-  if (!userData || !userData.active || userData.role === "client") {
+  if (!userData || !userData.active || (userData.role as string) === "client") {
     redirect("/no-autorizado");
   }
 

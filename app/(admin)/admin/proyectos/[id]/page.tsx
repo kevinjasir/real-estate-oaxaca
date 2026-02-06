@@ -10,10 +10,9 @@ import LocationPicker from "@/app/components/admin/LocationPicker";
 interface Lot {
   id: string;
   lot_number: string;
-  zone: string | null;
-  area_m2: number | null;
+  size_m2: number | null;
   price: number | null;
-  status: "available" | "reserved" | "sold";
+  status: "available" | "reserved" | "sold" | null;
 }
 
 interface Project {
@@ -120,14 +119,14 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
       return;
     }
 
-    setProject(data);
+    setProject(data as unknown as Project);
     setLoading(false);
   };
 
   const loadLots = async () => {
     const { data, error } = await supabase
       .from("lots")
-      .select("*")
+      .select("id, lot_number, size_m2, price, status")
       .eq("project_id", id)
       .order("lot_number", { ascending: true });
 
@@ -136,7 +135,7 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
       return;
     }
 
-    setLots(data || []);
+    setLots((data || []) as unknown as Lot[]);
   };
 
   const handleSaveProject = async () => {
@@ -153,7 +152,7 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
           slug: project.slug,
           description: project.description,
           short_description: project.short_description,
-          status: project.status,
+          status: project.status as "active" | "inactive",
           location_name: project.location_name,
           city: project.city,
           state: project.state,
@@ -190,10 +189,9 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
       const { error } = await supabase.from("lots").insert({
         project_id: id,
         lot_number: newLot.lot_number,
-        zone: newLot.zone || null,
-        area_m2: newLot.area_m2 ? parseFloat(newLot.area_m2) : null,
+        size_m2: newLot.area_m2 ? parseFloat(newLot.area_m2) : null,
         price: newLot.price ? parseFloat(newLot.price) : null,
-        status: newLot.status,
+        status: newLot.status as "available" | "reserved" | "sold",
       });
 
       if (error) throw error;
@@ -223,10 +221,9 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
         lotsToCreate.push({
           project_id: id,
           lot_number: lotNumber,
-          zone: bulkLots.zone || null,
-          area_m2: bulkLots.default_area ? parseFloat(bulkLots.default_area) : null,
+          size_m2: bulkLots.default_area ? parseFloat(bulkLots.default_area) : null,
           price: bulkLots.default_price ? parseFloat(bulkLots.default_price) : null,
-          status: "available",
+          status: "available" as const,
         });
       }
 
@@ -611,7 +608,6 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lote</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Zona</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Área</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
@@ -622,14 +618,13 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
                   {lots.map((lot) => (
                     <tr key={lot.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium text-gray-900">{lot.lot_number}</td>
-                      <td className="px-6 py-4 text-gray-500">{lot.zone || "-"}</td>
-                      <td className="px-6 py-4 text-gray-500">{lot.area_m2 ? `${lot.area_m2} m²` : "-"}</td>
+                      <td className="px-6 py-4 text-gray-500">{lot.size_m2 ? `${lot.size_m2} m²` : "-"}</td>
                       <td className="px-6 py-4 text-gray-900 font-medium">{formatPrice(lot.price)}</td>
                       <td className="px-6 py-4">
                         <select
-                          value={lot.status}
-                          onChange={(e) => handleUpdateLotStatus(lot.id, e.target.value as Lot["status"])}
-                          className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[lot.status]}`}
+                          value={lot.status || "available"}
+                          onChange={(e) => handleUpdateLotStatus(lot.id, e.target.value as "available" | "reserved" | "sold")}
+                          className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[lot.status || "available"]}`}
                         >
                           <option value="available">Disponible</option>
                           <option value="reserved">Reservado</option>
@@ -709,7 +704,7 @@ export default function EditarProyectoPage({ params }: { params: Promise<{ id: s
                 <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
                 <select
                   value={newLot.status}
-                  onChange={(e) => setNewLot({ ...newLot, status: e.target.value as Lot["status"] })}
+                  onChange={(e) => setNewLot({ ...newLot, status: e.target.value as "available" | "reserved" | "sold" })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="available">Disponible</option>
