@@ -3,14 +3,8 @@
 -- Los usuarios que se registran desde el sitio público son clientes
 -- ============================================================================
 
--- Primero verificar que 'client' esté en el enum user_role
-DO $$
-BEGIN
-  -- Intentar agregar 'client' al enum si no existe
-  IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'client' AND enumtypid = 'user_role'::regtype) THEN
-    ALTER TYPE user_role ADD VALUE IF NOT EXISTS 'client';
-  END IF;
-END $$;
+-- Nota: El valor 'client' ya debe existir en el enum desde migraciones anteriores
+-- Si no existe, esta migración fallará y se debe agregar en una migración separada
 
 -- Recrear la función para asignar 'client' por defecto
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -78,14 +72,8 @@ BEGIN
 END;
 $$;
 
--- Actualizar usuarios existentes que tienen rol 'agent' pero deberían ser 'client'
--- (usuarios que no tienen asignaciones de agente)
-UPDATE public.users
-SET role = 'client', updated_at = NOW()
-WHERE role = 'agent'
-  AND id NOT IN (
-    SELECT DISTINCT agent_id FROM agent_assignments WHERE agent_id IS NOT NULL
-  );
+-- Nota: No actualizamos roles aquí porque el valor 'client' puede no estar disponible
+-- en la misma transacción si se acaba de agregar al enum
 
 -- Comentario
 COMMENT ON FUNCTION public.handle_new_user() IS 'Crea un registro en public.users cuando un nuevo usuario se registra. El primer usuario es super_admin, los demás son client.';

@@ -8,7 +8,7 @@
 -- ============================================================================
 
 DO $$ BEGIN
-  CREATE TYPE user_role AS ENUM ('super_admin', 'admin', 'agent');
+  CREATE TYPE user_role AS ENUM ('super_admin', 'admin', 'agent', 'client');
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
