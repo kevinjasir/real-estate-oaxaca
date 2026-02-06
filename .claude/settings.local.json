@@ -49,7 +49,26 @@
       "Bash(vercel login)",
       "Bash(vercel link:*)",
       "Bash(vercel:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git push:*)",
+      "Bash(supabase projects list:*)",
+      "Bash(export SUPABASE_ACCESS_TOKEN=\"sbp_8fadd6d1fd6252925db9322c8e574d56c80794de\")",
+      "Bash(supabase projects api-keys:*)",
+      "Bash(TOKEN=\"sbp_8fadd6d1fd6252925db9322c8e574d56c80794de\")",
+      "Bash(SERVICE_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlbmFyemhocGd3enJpZXR5dHZ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTk5MTg3NSwiZXhwIjoyMDg1NTY3ODc1fQ.r4V1h9029pWZGjwUMe5Or6uTuYh6AuG_ozfkkYacdfA\")",
+      "Bash(__NEW_LINE_e33815dd2d49e162__ echo \"=== Lotes por proyecto ===\")",
+      "Bash(__NEW_LINE_effbcf02225e4d97__ echo \"\")",
+      "Bash(git checkout:*)",
+      "Bash(# Verificar que la limpieza fue exitosa PROD_KEY=\"\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlbmFyemhocGd3enJpZXR5dHZ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTk5MTg3NSwiZXhwIjoyMDg1NTY3ODc1fQ.r4V1h9029pWZGjwUMe5Or6uTuYh6AuG_ozfkkYacdfA\"\" echo \"\"=== Estado de producción después de limpieza ===\"\" echo \"\"\"\" echo \"\"Proyectos:\"\" curl -s \"\"https://fenarzhhpgwzrietytvx.supabase.co/rest/v1/projects?select=count\"\" \\\\ -H \"\"apikey: $PROD_KEY\"\" \\\\ -H \"\"Authorization: Bearer $PROD_KEY\"\" \\\\ -H \"\"Prefer: count=exact\"\" -I)",
+      "Bash(__NEW_LINE_b386fe229c8b6ccb__ echo \"\")",
+      "Bash(__NEW_LINE_86cac6f48c7d8953__ git commit -m \"$\\(cat <<''EOF''\nFix user_role enum to include ''client'' from the start\n\n- Add ''client'' to user_role enum in initial migration\n- Remove problematic enum addition in later migration\n- Fixes migration failure on fresh database\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(__NEW_LINE_86cac6f48c7d8953__ git push origin dev)",
+      "Bash(DEV_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vYmhra3VrZXduemt2Y3VybWxhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDM4OTgwOCwiZXhwIjoyMDg1OTY1ODA4fQ.fNDXdOBW292jsWDjEI1RcFwGfiBTwvaVieqWsIXV-j8\")",
+      "Bash(__NEW_LINE_e1ea6792e43e7cf9__ echo \"=== Proyectos en DEV ===\")",
+      "Bash(__NEW_LINE_b42a3b4bde7f0e96__ echo \"=== Lotes en DEV ===\")",
+      "Bash(__NEW_LINE_b42a3b4bde7f0e96__ echo \"\")",
+      "Bash(fi)",
+      "Bash(# Buscar el token en otra ubicación find ~ -name \"\"auth.json\"\" -path \"\"*vercel*\"\")"
     ]
   }
 }

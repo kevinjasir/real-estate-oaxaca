@@ -1,5 +1,44 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface SiteConfig {
+  whatsapp: string;
+  email: string;
+}
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [config, setConfig] = useState<SiteConfig>({
+    whatsapp: "529711567474",
+    email: "info@costaoaxaca.com",
+  });
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        const res = await fetch("/api/config/site");
+        if (res.ok) {
+          const data = await res.json();
+          setConfig(data);
+        }
+      } catch (error) {
+        console.error("Error fetching site config:", error);
+      }
+    }
+    fetchConfig();
+  }, []);
+
+  // Format phone number for display
+  const formatPhoneDisplay = (number: string) => {
+    // Remove country code prefix and format
+    const cleaned = number.replace(/\D/g, "");
+    if (cleaned.length === 12 && cleaned.startsWith("52")) {
+      const local = cleaned.slice(2);
+      return `+52 ${local.slice(0, 3)} ${local.slice(3, 6)} ${local.slice(6)}`;
+    }
+    return `+${cleaned}`;
+  };
 
   return (
     <footer className="border-t border-[var(--border)] bg-white">
@@ -79,7 +118,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <a
-                  href="tel:+529511234567"
+                  href={`tel:+${config.whatsapp}`}
                   className="flex items-center gap-2 text-[var(--muted)] transition-colors hover:text-[var(--primary)]"
                 >
                   <svg
@@ -95,12 +134,12 @@ export default function Footer() {
                       d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                     />
                   </svg>
-                  +52 951 123 4567
+                  {formatPhoneDisplay(config.whatsapp)}
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@costaoaxaca.com"
+                  href={`mailto:${config.email}`}
                   className="flex items-center gap-2 text-[var(--muted)] transition-colors hover:text-[var(--primary)]"
                 >
                   <svg
@@ -116,12 +155,12 @@ export default function Footer() {
                       d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                     />
                   </svg>
-                  info@costaoaxaca.com
+                  {config.email}
                 </a>
               </li>
               <li>
                 <a
-                  href="https://wa.me/529511234567"
+                  href={`https://wa.me/${config.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-[var(--muted)] transition-colors hover:text-[var(--primary)]"
