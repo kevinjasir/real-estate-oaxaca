@@ -5,9 +5,11 @@ type Project = {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   hero_image: string | null;
-  featured?: boolean;
+  featured?: boolean | null;
+  location_name?: string | null;
+  city?: string | null;
 };
 
 type ProjectCardProps = {
@@ -85,7 +87,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         {/* Description */}
         <p className="mb-4 line-clamp-2 text-sm text-[var(--muted)] leading-relaxed">
-          {project.description}
+          {project.description || "Descubre este increíble proyecto en la costa de Oaxaca."}
         </p>
 
         {/* CTA Link */}

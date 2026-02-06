@@ -11,12 +11,12 @@ type Project = {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   hero_image: string | null;
   gallery: string[];
-  featured?: boolean;
-  location_name?: string;
-  city?: string;
+  featured?: boolean | null;
+  location_name?: string | null;
+  city?: string | null;
 };
 
 // Fetch projects directly from Supabase (server component)
