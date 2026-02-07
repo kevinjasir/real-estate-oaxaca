@@ -82,6 +82,27 @@ export default function MiProyectoDetallePage() {
     }
 
     setLoading(false);
+
+    // Verificar si el usuario tiene permiso (asignación) para ver los lotes
+    // Esto es solo para mostrar un mensaje amigable, RLS ya protege los datos real
+    if (lotsData?.length === 0) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: userData } = await supabase.from("users").select("role").eq("id", user.id).single();
+        if (userData?.role === "agent") {
+          const { data: assignment } = await supabase
+            .from("agent_assignments")
+            .select("id")
+            .eq("project_id", projectData.id)
+            .eq("agent_id", user.id)
+            .maybeSingle(); // Use maybeSingle to avoid error if not found
+
+          if (!assignment) {
+            setMessage({ type: "error", text: "No tienes asignado este proyecto. Contacta a un administrador para ver los detalles." });
+          }
+        }
+      }
+    }
   };
 
   const handleStatusChange = async (lotId: string, newStatus: Lot["status"]) => {
@@ -169,11 +190,10 @@ export default function MiProyectoDetallePage() {
       {/* Message */}
       {message && (
         <div
-          className={`mb-6 p-4 rounded-lg ${
-            message.type === "success"
+          className={`mb-6 p-4 rounded-lg ${message.type === "success"
               ? "bg-green-50 text-green-800 border border-green-200"
               : "bg-red-50 text-red-800 border border-red-200"
-          }`}
+            }`}
         >
           {message.text}
         </div>
@@ -183,36 +203,32 @@ export default function MiProyectoDetallePage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <button
           onClick={() => setFilter("all")}
-          className={`p-4 rounded-xl border text-left transition-colors ${
-            filter === "all" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
-          }`}
+          className={`p-4 rounded-xl border text-left transition-colors ${filter === "all" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
+            }`}
         >
           <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
           <p className="text-sm text-gray-500">Total</p>
         </button>
         <button
           onClick={() => setFilter("available")}
-          className={`p-4 rounded-xl border text-left transition-colors ${
-            filter === "available" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
-          }`}
+          className={`p-4 rounded-xl border text-left transition-colors ${filter === "available" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
+            }`}
         >
           <p className="text-2xl font-bold text-emerald-600">{stats.available}</p>
           <p className="text-sm text-gray-500">Disponibles</p>
         </button>
         <button
           onClick={() => setFilter("reserved")}
-          className={`p-4 rounded-xl border text-left transition-colors ${
-            filter === "reserved" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
-          }`}
+          className={`p-4 rounded-xl border text-left transition-colors ${filter === "reserved" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
+            }`}
         >
           <p className="text-2xl font-bold text-amber-600">{stats.reserved}</p>
           <p className="text-sm text-gray-500">Reservados</p>
         </button>
         <button
           onClick={() => setFilter("sold")}
-          className={`p-4 rounded-xl border text-left transition-colors ${
-            filter === "sold" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
-          }`}
+          className={`p-4 rounded-xl border text-left transition-colors ${filter === "sold" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
+            }`}
         >
           <p className="text-2xl font-bold text-red-600">{stats.sold}</p>
           <p className="text-sm text-gray-500">Vendidos</p>
@@ -260,9 +276,8 @@ export default function MiProyectoDetallePage() {
                   value={lot.status || "available"}
                   onChange={(e) => handleStatusChange(lot.id, e.target.value as Lot["status"])}
                   disabled={updating === lot.id || lot.status === "pending_review"}
-                  className={`w-full text-xs font-medium px-2 py-1.5 rounded border-0 cursor-pointer ${
-                    updating === lot.id || lot.status === "pending_review" ? "opacity-50" : ""
-                  } ${STATUS_COLORS[lot.status || "available"]}`}
+                  className={`w-full text-xs font-medium px-2 py-1.5 rounded border-0 cursor-pointer ${updating === lot.id || lot.status === "pending_review" ? "opacity-50" : ""
+                    } ${STATUS_COLORS[lot.status || "available"]}`}
                 >
                   {lot.status === "sold" ? (
                     <>
