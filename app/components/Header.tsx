@@ -200,7 +200,7 @@ export default function Header() {
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
                     </div>
 
-                    {["admin", "super_admin", "agente"].includes(userRole || "") && (
+                    {["admin", "super_admin", "agent"].includes(userRole || "") && (
                       <Link
                         href="/admin"
                         className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
@@ -320,7 +320,7 @@ export default function Header() {
                     </div>
                   </div>
 
-                  {["admin", "super_admin", "agente"].includes(userRole || "") && (
+                  {["admin", "super_admin", "agent"].includes(userRole || "") && (
                     <Link
                       href="/admin"
                       onClick={() => setIsMobileMenuOpen(false)}
