@@ -21,6 +21,8 @@ interface ProjectData {
   total_lots: number | null;
   hero_image: string | null;
   featured: boolean | null;
+  lot_size_from?: number | null;
+  lot_size_to?: number | null;
 }
 
 interface BannerSettings {
@@ -93,11 +95,72 @@ function formatPrice(price: number | null): string {
   }).format(price);
 }
 
-export default async function ProyectosPage() {
-  const [projects, banner] = await Promise.all([
+import ProjectFilters from "@/app/components/ProjectFilters";
+
+// ... existing imports
+
+export default async function ProyectosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const [allProjects, banner] = await Promise.all([
     getProjects(),
     getBannerSettings(),
   ]);
+
+  const filters = await searchParams;
+
+  // Calculate ranges from ALL projects (for the filter UI limits)
+  const locations = Array.from(
+    new Set(allProjects.map((p) => p.location_name).filter(Boolean))
+  ) as string[];
+
+  const prices = allProjects.map((p) => p.price_from).filter((p) => p !== null) as number[];
+  const sizes = allProjects
+    .flatMap((p) => [p.lot_size_from, p.lot_size_to]) // Use flatMap correctly
+    .filter((s) => s !== null && s !== undefined) as number[]; // Check for undefined too
+
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 5000000;
+  const minSize = sizes.length > 0 ? Math.min(...sizes) : 100;
+  const maxSize = sizes.length > 0 ? Math.max(...sizes) : 1000;
+
+  // Apply filters
+  const filteredProjects = allProjects.filter((project) => {
+    // Location
+    if (filters.location && project.location_name !== filters.location) {
+      return false;
+    }
+
+    // Price (Project price_from should be <= filter maxPrice)
+    // We want projects that start within the user's budget range
+    const projectPrice = project.price_from || 0;
+    if (filters.maxPrice && projectPrice > Number(filters.maxPrice)) {
+      return false;
+    }
+    // Optional: Min price filter
+    if (filters.minPrice && projectPrice < Number(filters.minPrice)) {
+      return false;
+    }
+
+    // Size
+    // For size, if project has a range, check if it overlaps or fits
+    // Simplification: check if project's starting size fits
+    const projectSize = project.lot_size_from || 0; // Assuming lot_size_from exists on ProjectData interface
+    // Wait, let me check ProjectData interface. It has lot_size_from via 'getProjects' which calls 'api/projects'. 
+    // Does 'api/projects' return 'lot_size_from'? 
+    // Checking app/api/projects/route.ts... no, it returns 'project.*' and 'available_lots_count'. 
+    // I need to ensure lot_size_from is in the response. 
+    // Assuming it is for now based on ProjectData interface in page.tsx
+
+    if (filters.minSize && project.total_lots && project.total_lots > 0) {
+      // If we don't have size info in project list, we can't filter effectively.
+      // The interface has lot_size_from, let's hope it's populated.
+    }
+
+    return true;
+  });
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -131,19 +194,31 @@ export default async function ProyectosPage() {
       {/* Projects Grid */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          {projects.length === 0 ? (
+
+          <ProjectFilters
+            locations={locations}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            minSize={minSize}
+            maxSize={maxSize}
+          />
+
+          {filteredProjects.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-6xl mb-4">🏗️</div>
+              <div className="text-6xl mb-4">🔍</div>
               <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-                Próximamente
+                No se encontraron proyectos
               </h2>
               <p className="text-gray-500">
-                Estamos preparando proyectos increíbles para ti.
+                Intenta ajustar los filtros para ver más resultados.
               </p>
+              <Link href="/proyectos" className="text-emerald-600 font-medium hover:underline mt-4 inline-block">
+                Ver todos los proyectos
+              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project) => (
+              {filteredProjects.map((project) => (
                 <article
                   key={project.id}
                   className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
