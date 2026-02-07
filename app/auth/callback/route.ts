@@ -24,7 +24,7 @@ export async function GET(request: Request) {
           .single();
 
         // Si el usuario no está activo o no es admin, redirigir al home
-        if (!userData?.active || !["admin", "super_admin"].includes(userData.role)) {
+        if (!userData?.active || !["admin", "super_admin", "agent"].includes(userData.role)) {
           return NextResponse.redirect(`${origin}/`);
         }
 
