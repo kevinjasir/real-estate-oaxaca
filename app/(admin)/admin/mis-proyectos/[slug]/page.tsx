@@ -8,7 +8,7 @@ import Link from "next/link";
 interface Lot {
   id: string;
   lot_number: string;
-  size_m2: number | null;
+  area_m2: number | null;
   price: number | null;
   status: "available" | "reserved" | "sold" | "pending_review" | null;
 }
