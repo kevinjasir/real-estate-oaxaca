@@ -71,12 +71,13 @@ export default function MiProyectoDetallePage() {
     // Cargar lotes
     const { data: lotsData, error: lotsError } = await supabase
       .from("lots")
-      .select("id, lot_number, size_m2, price, status")
+      .select("id, lot_number, area_m2, price, status")
       .eq("project_id", projectData.id)
       .order("lot_number", { ascending: true });
 
     if (lotsError) {
       console.error("Error loading lots:", lotsError);
+      setMessage({ type: "error", text: "Error al cargar los lotes. Por favor intenta más tarde." });
     } else {
       setLots(lotsData || []);
     }
@@ -276,7 +277,7 @@ export default function MiProyectoDetallePage() {
                 {/* Info */}
                 <div className="text-xs space-y-1 mb-3">
                   <p>
-                    <span className="text-gray-500">Área:</span> {lot.size_m2 || 0} m²
+                    <span className="text-gray-500">Área:</span> {lot.area_m2 || 0} m²
                   </p>
                   <p>
                     <span className="text-gray-500">Precio:</span> {formatPrice(lot.price)}
