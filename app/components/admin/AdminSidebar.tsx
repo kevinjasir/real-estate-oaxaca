@@ -275,6 +275,7 @@ export default function AdminSidebar({ user, isOpen, onClose }: AdminSidebarProp
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={onClose}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
                   ? "bg-emerald-50 text-emerald-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"

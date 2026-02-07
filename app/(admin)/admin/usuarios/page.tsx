@@ -125,11 +125,10 @@ export default function UsuariosPage() {
       {/* Message */}
       {message && (
         <div
-          className={`mb-6 p-4 rounded-lg ${
-            message.type === "success"
+          className={`mb-6 p-4 rounded-lg ${message.type === "success"
               ? "bg-green-50 text-green-800 border border-green-200"
               : "bg-red-50 text-red-800 border border-red-200"
-          }`}
+            }`}
         >
           {message.text}
         </div>
@@ -139,9 +138,8 @@ export default function UsuariosPage() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         <button
           onClick={() => setFilter("all")}
-          className={`p-4 rounded-xl border text-left transition-colors ${
-            filter === "all" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
-          }`}
+          className={`p-4 rounded-xl border text-left transition-colors ${filter === "all" ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
+            }`}
         >
           <p className="text-2xl font-bold text-gray-900">{users.length}</p>
           <p className="text-sm text-gray-500">Total</p>
@@ -150,9 +148,8 @@ export default function UsuariosPage() {
           <button
             key={role}
             onClick={() => setFilter(role)}
-            className={`p-4 rounded-xl border text-left transition-colors ${
-              filter === role ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
-            }`}
+            className={`p-4 rounded-xl border text-left transition-colors ${filter === role ? "bg-emerald-50 border-emerald-300" : "bg-white border-gray-200 hover:bg-gray-50"
+              }`}
           >
             <p className="text-2xl font-bold text-gray-900">
               {users.filter(u => u.role === role).length}
@@ -163,7 +160,7 @@ export default function UsuariosPage() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -232,14 +229,12 @@ export default function UsuariosPage() {
                   <td className="px-6 py-4">
                     <button
                       onClick={() => handleActiveChange(user.id, !user.active)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        user.active ? "bg-emerald-500" : "bg-gray-300"
-                      }`}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${user.active ? "bg-emerald-500" : "bg-gray-300"
+                        }`}
                     >
                       <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          user.active ? "translate-x-6" : "translate-x-1"
-                        }`}
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${user.active ? "translate-x-6" : "translate-x-1"
+                          }`}
                       />
                     </button>
                     <span className={`ml-2 text-sm ${user.active ? "text-emerald-600" : "text-gray-500"}`}>
