@@ -208,7 +208,14 @@ const navigation: NavItem[] = [
   },
 ];
 
-export default function AdminSidebar({ user }: { user: UserData }) {
+// Update interface to include new props
+interface AdminSidebarProps {
+  user: UserData;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AdminSidebar({ user, isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
   const filteredNavigation = navigation.filter((item) =>
@@ -239,64 +246,76 @@ export default function AdminSidebar({ user }: { user: UserData }) {
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 hidden lg:block">
-      {/* Logo */}
-      <div className="flex items-center gap-3 h-16 px-6 border-b border-gray-200">
-        <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-          <span className="text-lg">🏠</span>
-        </div>
-        <span className="font-bold text-gray-900">Costa Oaxaca</span>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 transition-opacity lg:hidden"
+          onClick={onClose}
+        />
+      )}
 
-      {/* Navigation */}
-      <nav className="p-4 space-y-1">
-        {filteredNavigation.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                isActive
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3 h-16 px-6 border-b border-gray-200">
+          <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+            <span className="text-lg">🏠</span>
+          </div>
+          <span className="font-bold text-gray-900">Costa Oaxaca</span>
+        </div>
+
+        {/* Navigation */}
+        <nav className="p-4 space-y-1">
+          {filteredNavigation.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
                   ? "bg-emerald-50 text-emerald-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
-            >
-              <span className={isActive ? "text-emerald-600" : ""}>
-                {item.icon}
-              </span>
-              <span className="font-medium">{item.name}</span>
-            </Link>
-          );
-        })}
-      </nav>
+                  }`}
+              >
+                <span className={isActive ? "text-emerald-600" : ""}>
+                  {item.icon}
+                </span>
+                <span className="font-medium">{item.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
 
-      {/* User Info */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-        <div className="flex items-center gap-3">
-          {user.avatar_url ? (
-            <Image
-              src={user.avatar_url}
-              alt={user.full_name}
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-              <span className="text-emerald-700 font-medium">
-                {user.full_name.charAt(0).toUpperCase()}
-              </span>
+        {/* User Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3">
+            {user.avatar_url ? (
+              <Image
+                src={user.avatar_url}
+                alt={user.full_name}
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+            ) : (
+              <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                <span className="text-emerald-700 font-medium">
+                  {user.full_name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user.full_name}
+              </p>
+              {getRoleBadge(user.role)}
             </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {user.full_name}
-            </p>
-            {getRoleBadge(user.role)}
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

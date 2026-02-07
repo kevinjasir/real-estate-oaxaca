@@ -13,7 +13,12 @@ interface UserData {
   role: "super_admin" | "admin" | "agent";
 }
 
-export default function AdminHeader({ user }: { user: UserData }) {
+interface AdminHeaderProps {
+  user: UserData;
+  onMenuClick: () => void;
+}
+
+export default function AdminHeader({ user, onMenuClick }: AdminHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -30,9 +35,7 @@ export default function AdminHeader({ user }: { user: UserData }) {
         {/* Mobile menu button */}
         <button
           className="lg:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700"
-          onClick={() => {
-            // TODO: Implementar menú móvil
-          }}
+          onClick={onMenuClick}
         >
           <svg
             className="w-6 h-6"

@@ -73,20 +73,18 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/95 shadow-sm backdrop-blur-md"
-          : "bg-transparent"
-      }`}
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${isScrolled
+        ? "bg-white/95 shadow-sm backdrop-blur-md"
+        : "bg-transparent"
+        }`}
     >
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <Link
             href="/"
-            className={`text-xl font-bold transition-colors ${
-              isScrolled ? "text-[var(--foreground)]" : "text-white"
-            }`}
+            className={`text-xl font-bold transition-colors ${isScrolled ? "text-[var(--foreground)]" : "text-white"
+              }`}
           >
             Costa Oaxaca
           </Link>
@@ -95,31 +93,28 @@ export default function Header() {
           <div className="hidden items-center gap-8 md:flex">
             <a
               href="#proyectos"
-              className={`text-sm font-medium transition-colors ${
-                isScrolled
-                  ? "text-[var(--foreground)] hover:text-[var(--primary)]"
-                  : "text-white/90 hover:text-white"
-              }`}
+              className={`text-sm font-medium transition-colors ${isScrolled
+                ? "text-[var(--foreground)] hover:text-[var(--primary)]"
+                : "text-white/90 hover:text-white"
+                }`}
             >
               Proyectos
             </a>
             <a
               href="#contacto"
-              className={`text-sm font-medium transition-colors ${
-                isScrolled
-                  ? "text-[var(--foreground)] hover:text-[var(--primary)]"
-                  : "text-white/90 hover:text-white"
-              }`}
+              className={`text-sm font-medium transition-colors ${isScrolled
+                ? "text-[var(--foreground)] hover:text-[var(--primary)]"
+                : "text-white/90 hover:text-white"
+                }`}
             >
               Contacto
             </a>
             <a
               href="#contacto"
-              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all ${
-                isScrolled
-                  ? "btn-primary"
-                  : "bg-white text-[var(--foreground)] hover:bg-white/90"
-              }`}
+              className={`rounded-lg px-5 py-2.5 text-sm font-semibold transition-all ${isScrolled
+                ? "btn-primary"
+                : "bg-white text-[var(--foreground)] hover:bg-white/90"
+                }`}
             >
               Hablar con asesor
             </a>
@@ -131,11 +126,10 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                    isScrolled
-                      ? "text-[var(--foreground)] hover:text-[var(--primary)]"
-                      : "text-white hover:text-white/80"
-                  }`}
+                  className={`flex items-center gap-2 text-sm font-medium transition-colors ${isScrolled
+                    ? "text-[var(--foreground)] hover:text-[var(--primary)]"
+                    : "text-white hover:text-white/80"
+                    }`}
                 >
                   {getUserAvatar() ? (
                     <img
@@ -144,9 +138,8 @@ export default function Header() {
                       className="h-8 w-8 rounded-full object-cover border-2 border-white/50"
                     />
                   ) : (
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                      isScrolled ? "bg-emerald-100 text-emerald-700" : "bg-white/20 text-white"
-                    }`}>
+                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold ${isScrolled ? "bg-emerald-100 text-emerald-700" : "bg-white/20 text-white"
+                      }`}>
                       {getInitials()}
                     </div>
                   )}
@@ -178,11 +171,10 @@ export default function Header() {
             ) : (
               <Link
                 href="/login"
-                className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-                  isScrolled
-                    ? "text-[var(--muted-foreground)] hover:text-[var(--primary)]"
-                    : "text-white/70 hover:text-white"
-                }`}
+                className={`flex items-center gap-2 text-sm font-medium transition-colors ${isScrolled
+                  ? "text-[var(--muted-foreground)] hover:text-[var(--primary)]"
+                  : "text-white/70 hover:text-white"
+                  }`}
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -195,9 +187,8 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`md:hidden ${
-              isScrolled ? "text-[var(--foreground)]" : "text-white"
-            }`}
+            className={`md:hidden ${isScrolled ? "text-[var(--foreground)]" : "text-white"
+              }`}
             aria-label="Abrir menú"
           >
             <svg
@@ -300,6 +291,6 @@ export default function Header() {
           </div>
         )}
       </nav>
-    </header>
+    </header >
   );
 }

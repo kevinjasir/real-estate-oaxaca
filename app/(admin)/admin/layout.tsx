@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import AdminSidebar from "@/app/components/admin/AdminSidebar";
-import AdminHeader from "@/app/components/admin/AdminHeader";
+import AdminLayoutContent from "@/app/components/admin/AdminLayoutContent";
 
 interface UserData {
   id: string;
@@ -39,12 +38,8 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <AdminSidebar user={userData as UserData} />
-      <div className="lg:pl-64">
-        <AdminHeader user={userData as UserData} />
-        <main className="p-6">{children}</main>
-      </div>
+    <div className="bg-gray-100">
+      <AdminLayoutContent user={userData as UserData}>{children}</AdminLayoutContent>
     </div>
   );
 }
