@@ -108,6 +108,29 @@ export default async function Home() {
                 Descubre terrenos y residenciales verificados en las zonas más
                 cotizadas de la costa oaxaqueña.
               </p>
+
+              {/* View All Button */}
+              <div className="mt-8">
+                <Link
+                  href="/proyectos"
+                  className="group inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:bg-[var(--primary-dark)] hover:shadow-xl hover:-translate-y-1"
+                >
+                  Ver todos los proyectos
+                  <svg
+                    className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </Link>
+              </div>
             </div>
 
             {/* Projects Grid */}
@@ -147,32 +170,6 @@ export default async function Home() {
                 </a>
               </div>
             )}
-
-            {/* View All Button */}
-            <div className="mt-16 text-center">
-              <Link
-                href="/proyectos"
-                className="group inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:bg-[var(--primary-dark)] hover:shadow-xl hover:-translate-y-1"
-              >
-                Ver todos los proyectos
-                <svg
-                  className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </Link>
-              <p className="mt-4 text-sm text-[var(--muted)]">
-                Explora nuestro catálogo completo de oportunidades de inversión
-              </p>
-            </div>
           </div>
         </section>
 
