@@ -83,21 +83,33 @@ export default function MiProyectoDetallePage() {
 
     setLoading(false);
 
+    // Logging de depuración
+    console.log("Load Project - Slug:", slug);
+    console.log("Project Data:", projectData);
+    console.log("Lots Data Length:", lotsData?.length);
+
     // Verificar si el usuario tiene permiso (asignación) para ver los lotes
-    // Esto es solo para mostrar un mensaje amigable, RLS ya protege los datos real
     if (lotsData?.length === 0) {
       const { data: { user } } = await supabase.auth.getUser();
+      console.log("Auth User:", user?.id);
+
       if (user) {
         const { data: userData } = await supabase.from("users").select("role").eq("id", user.id).single();
-        if (userData?.role === "agent") {
-          const { data: assignment } = await supabase
+        console.log("User Role:", userData?.role);
+
+        // Verificar ambas variantes del rol
+        if (userData && ["agent", "agente"].includes(userData.role)) {
+          const { data: assignment, error: assignmentError } = await supabase
             .from("agent_assignments")
             .select("id")
             .eq("project_id", projectData.id)
             .eq("agent_id", user.id)
-            .maybeSingle(); // Use maybeSingle to avoid error if not found
+            .maybeSingle();
+
+          console.log("Assignment Check:", assignment);
 
           if (!assignment) {
+            console.log("No assignment found, showing error.");
             setMessage({ type: "error", text: "No tienes asignado este proyecto. Contacta a un administrador para ver los detalles." });
           }
         }
@@ -191,8 +203,8 @@ export default function MiProyectoDetallePage() {
       {message && (
         <div
           className={`mb-6 p-4 rounded-lg ${message.type === "success"
-              ? "bg-green-50 text-green-800 border border-green-200"
-              : "bg-red-50 text-red-800 border border-red-200"
+            ? "bg-green-50 text-green-800 border border-green-200"
+            : "bg-red-50 text-red-800 border border-red-200"
             }`}
         >
           {message.text}
