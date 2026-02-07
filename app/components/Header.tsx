@@ -21,44 +21,64 @@ export default function Header() {
     };
 
     window.addEventListener("scroll", handleScroll);
+
+    // Initial check
+    handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    // Check current session
+    let mounted = true;
+
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
 
-      if (user) {
-        const { data: userData } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-        setUserRole(userData?.role || null);
+        if (mounted) {
+          setUser(user);
+
+          if (user) {
+            const { data: userData } = await supabase
+              .from("users")
+              .select("role")
+              .eq("id", user.id)
+              .single();
+
+            if (mounted) {
+              setUserRole(userData?.role || null);
+            }
+          }
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        if (mounted) setLoading(false);
       }
-
-      setLoading(false);
     };
+
     getUser();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data: userData } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", session.user.id)
-          .single();
-        setUserRole(userData?.role || null);
-      } else {
-        setUserRole(null);
+      if (mounted) {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          const { data: userData } = await supabase
+            .from("users")
+            .select("role")
+            .eq("id", session.user.id)
+            .single();
+          if (mounted) {
+            setUserRole(userData?.role || null);
+          }
+        } else {
+          setUserRole(null);
+        }
       }
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
@@ -146,7 +166,7 @@ export default function Header() {
             {loading ? (
               <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200"></div>
             ) : user ? (
-              <div className="relative">
+              <div className="relative z-50">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className={`flex items-center gap-2 text-sm font-medium transition-colors ${isScrolled
