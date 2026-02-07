@@ -12,12 +12,13 @@ interface Project {
   available_lots: number | null;
   price_from: number | null;
   created_at: string | null;
+  image?: string | null;
 }
 
 async function getProjects(): Promise<Project[]> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  const { data: projects, error } = await supabase
     .from("projects")
     .select(
       `
@@ -39,7 +40,25 @@ async function getProjects(): Promise<Project[]> {
     return [];
   }
 
-  return data as Project[];
+  if (!projects || projects.length === 0) return [];
+
+  // Fetch media for these projects
+  const projectIds = projects.map((p) => p.id);
+  const { data: media } = await supabase
+    .from("media")
+    .select("entity_id, url")
+    .eq("entity_type", "project")
+    .in("entity_id", projectIds)
+    .order("order_index", { ascending: true });
+
+  // Merge media with projects
+  return projects.map((project) => {
+    const projectMedia = media?.find((m) => m.entity_id === project.id);
+    return {
+      ...project,
+      image: projectMedia?.url || null,
+    } as Project;
+  });
 }
 
 function formatPrice(price: number | null): string {
@@ -144,9 +163,21 @@ export default async function ProyectosAdminPage() {
               key={project.id}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
             >
-              {/* Project Image Placeholder */}
-              <div className="h-40 bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                <span className="text-5xl">🏝️</span>
+              {/* Project Image */}
+              <div className="relative h-48 w-full bg-gray-100">
+                {project.image ? (
+                  <Image
+                    src={project.image}
+                    alt={project.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                    <span className="text-5xl">🏝️</span>
+                  </div>
+                )}
               </div>
 
               {/* Project Info */}
