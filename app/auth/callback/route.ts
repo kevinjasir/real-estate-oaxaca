@@ -23,16 +23,20 @@ export async function GET(request: Request) {
           .eq("id", user.id)
           .single();
 
-        if (!userData?.active) {
-          // Usuario no activo, redirigir a página de espera
-          return NextResponse.redirect(`${origin}/no-autorizado`);
+        // Si el usuario no está activo o no es admin, redirigir al home
+        if (!userData?.active || !["admin", "super_admin"].includes(userData.role)) {
+          return NextResponse.redirect(`${origin}/`);
         }
-      }
 
-      return NextResponse.redirect(`${origin}${next}`);
+        // Si es admin activo y hay un next específico (o default /admin), permitir acceso
+        return NextResponse.redirect(`${origin}${next}`);
+      }
     }
+
+    // Error en el flujo de auth
+    return NextResponse.redirect(`${origin}/login?error=auth_failed`);
   }
 
-  // Error en el flujo de auth
+  // Error en el flujo de auth (this line was moved outside the if(code) block)
   return NextResponse.redirect(`${origin}/login?error=auth_failed`);
 }
