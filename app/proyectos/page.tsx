@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Proyectos | Terrenos en la Costa de Oaxaca",
@@ -31,7 +31,7 @@ interface BannerSettings {
 
 async function getProjects(): Promise<ProjectData[]> {
   try {
-    const supabase = await createClient();
+    const supabase = await createServiceClient();
 
     const { data: projects, error: projectsError } = await supabase
       .from("projects")
