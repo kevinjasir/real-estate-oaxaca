@@ -30,19 +30,31 @@ interface BannerSettings {
 }
 
 async function getProjects(): Promise<ProjectData[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
   try {
-    const res = await fetch(`${baseUrl}/api/projects`, {
-      next: { revalidate: 60 },
-    });
+    const supabase = await createClient();
 
-    if (!res.ok) {
-      console.error("Failed to fetch projects:", res.status);
-      return [];
-    }
+    const { data: projects, error: projectsError } = await supabase
+      .from("projects")
+      .select(`id, name, slug, short_description, location_name, city,
+               price_from, available_lots, total_lots, featured, status`)
+      .eq("status", "active")
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false });
 
-    return res.json();
+    if (projectsError || !projects || projects.length === 0) return [];
+
+    const projectIds = projects.map((p) => p.id);
+    const { data: media } = await supabase
+      .from("media")
+      .select("entity_id, url, order_index")
+      .eq("entity_type", "project")
+      .in("entity_id", projectIds)
+      .order("order_index", { ascending: true });
+
+    return projects.map((project) => ({
+      ...project,
+      hero_image: media?.find((m) => m.entity_id === project.id)?.url || null,
+    }));
   } catch (error) {
     console.error("Error fetching projects:", error);
     return [];
