@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Proyectos | Terrenos en la Costa de Oaxaca",
   description:
