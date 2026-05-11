@@ -19,7 +19,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80";
 
   return (
-    <article className="card-hover group relative overflow-hidden rounded-2xl bg-white shadow-sm border border-[var(--border)]">
+    <article className="card-hover relative overflow-hidden rounded-2xl bg-white shadow-sm border border-[var(--border)]">
       {/* Featured Badge */}
       {project.featured && (
         <div className="absolute left-4 top-4 z-10">
@@ -32,80 +32,42 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </div>
       )}
 
-      {/* Image Container */}
+      {/* Image */}
       <div className="relative h-56 overflow-hidden md:h-64">
         <Image
           src={project.hero_image || placeholderImage}
           alt={`Vista del proyecto ${project.name}`}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-        {/* Quick View Button on Hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <span className="rounded-full bg-white px-6 py-2 text-sm font-semibold text-[var(--foreground)] shadow-lg">
-            Ver detalles
-          </span>
-        </div>
       </div>
 
       {/* Content */}
       <div className="p-6">
-        {/* Location Tag */}
         <div className="mb-3 flex items-center gap-1 text-sm text-[var(--muted)]">
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-            />
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           Costa de Oaxaca
         </div>
 
-        {/* Title */}
-        <h3 className="mb-2 text-xl font-bold text-[var(--foreground)] transition-colors group-hover:text-[var(--primary)]">
+        <h3 className="mb-2 text-xl font-bold text-[var(--foreground)]">
           {project.name}
         </h3>
 
-        {/* Description */}
         <p className="mb-4 line-clamp-2 text-sm text-[var(--muted)] leading-relaxed">
           {project.description}
         </p>
 
-        {/* CTA Link */}
         <Link
           href={`/proyectos/${project.slug}`}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--primary)] transition-colors hover:text-[var(--primary-dark)]"
+          className="inline-flex items-center gap-2 rounded-lg bg-[var(--primary)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)]"
         >
           Conocer más
-          <svg
-            className="h-4 w-4 transition-transform group-hover:translate-x-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8l4 4m0 0l-4 4m4-4H3"
-            />
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
         </Link>
       </div>
