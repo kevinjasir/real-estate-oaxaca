@@ -31,16 +31,39 @@ interface BannerSettings {
   subtitle: string;
 }
 
+const SB_URL = "https://fenarzhhpgwzrietytvx.supabase.co";
+const SB_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlbmFyemhocGd3enJpZXR5dHZ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTk5MTg3NSwiZXhwIjoyMDg1NTY3ODc1fQ.r4V1h9029pWZGjwUMe5Or6uTuYh6AuG_ozfkkYacdfA";
+
 async function getProjects(): Promise<ProjectData[]> {
   try {
-    // Vercel sets VERCEL_URL automatically (without https://)
-    const host = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
+    const headers = {
+      apikey: SB_KEY,
+      Authorization: `Bearer ${SB_KEY}`,
+      "Content-Type": "application/json",
+    };
 
-    const res = await fetch(`${host}/api/projects`, { cache: "no-store" });
+    const fields = "id,name,slug,short_description,location_name,city,price_from,available_lots,total_lots,featured";
+    const res = await fetch(
+      `${SB_URL}/rest/v1/projects?status=eq.active&select=${fields}&order=featured.desc,created_at.desc`,
+      { headers, cache: "no-store" }
+    );
     if (!res.ok) return [];
-    return res.json();
+    const projects: ProjectData[] = await res.json();
+    if (!projects.length) return [];
+
+    const ids = projects.map((p) => p.id).join(",");
+    const mediaRes = await fetch(
+      `${SB_URL}/rest/v1/media?entity_type=eq.project&entity_id=in.(${ids})&select=entity_id,url,order_index&order=order_index.asc`,
+      { headers, cache: "no-store" }
+    );
+    const media: { entity_id: string; url: string; order_index: number }[] =
+      mediaRes.ok ? await mediaRes.json() : [];
+
+    return projects.map((p) => ({
+      ...p,
+      hero_image: media.find((m) => m.entity_id === p.id)?.url || null,
+    }));
   } catch (error) {
     console.error("Error fetching projects:", error);
     return [];
