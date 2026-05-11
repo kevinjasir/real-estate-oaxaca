@@ -5,7 +5,8 @@ import TrustSection from "./components/TrustSection";
 import CTASection from "./components/CTASection";
 import Footer from "./components/Footer";
 
-// Type definitions for API response
+export const dynamic = "force-dynamic";
+
 type Project = {
   id: string;
   name: string;
@@ -16,20 +17,44 @@ type Project = {
   featured?: boolean;
 };
 
-// Fetch projects from API with error handling
+const SB_URL = "https://fenarzhhpgwzrietytvx.supabase.co";
+const SB_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlbmFyemhocGd3enJpZXR5dHZ4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTk5MTg3NSwiZXhwIjoyMDg1NTY3ODc1fQ.r4V1h9029pWZGjwUMe5Or6uTuYh6AuG_ozfkkYacdfA";
+const SB_HEADERS = {
+  apikey: SB_KEY,
+  Authorization: `Bearer ${SB_KEY}`,
+  "Content-Type": "application/json",
+};
+
 async function getProjects(): Promise<Project[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/projects`, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds for fresh data
+    const fields = "id,name,slug,description,short_description,featured,cover_image_url";
+    const res = await fetch(
+      `${SB_URL}/rest/v1/projects?status=eq.active&select=${fields}&order=featured.desc,created_at.desc&limit=6`,
+      { headers: SB_HEADERS, cache: "no-store" }
+    );
+    if (!res.ok) return [];
+    const projects = await res.json();
+    if (!projects.length) return [];
+
+    const ids = projects.map((p: Record<string, string>) => p.id).join(",");
+    const mediaRes = await fetch(
+      `${SB_URL}/rest/v1/media?entity_type=eq.project&entity_id=in.(${ids})&select=entity_id,url,order_index&order=order_index.asc`,
+      { headers: SB_HEADERS, cache: "no-store" }
+    );
+    const media: { entity_id: string; url: string }[] = mediaRes.ok
+      ? await mediaRes.json()
+      : [];
+
+    return projects.map((p: Record<string, unknown>) => {
+      const imgs = media.filter((m) => m.entity_id === p.id).map((m) => m.url);
+      return {
+        ...p,
+        hero_image: (p.cover_image_url as string | null) || imgs[0] || null,
+        gallery: imgs,
+      };
     });
-
-    if (!res.ok) {
-      console.error("Failed to fetch projects:", res.status);
-      return [];
-    }
-
-    return res.json();
   } catch (error) {
     console.error("Error fetching projects:", error);
     return [];
