@@ -33,30 +33,14 @@ interface BannerSettings {
 
 async function getProjects(): Promise<ProjectData[]> {
   try {
-    const supabase = await createServiceClient();
+    // Vercel sets VERCEL_URL automatically (without https://)
+    const host = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000";
 
-    const { data: projects, error: projectsError } = await supabase
-      .from("projects")
-      .select(`id, name, slug, short_description, location_name, city,
-               price_from, available_lots, total_lots, featured, status`)
-      .eq("status", "active")
-      .order("featured", { ascending: false })
-      .order("created_at", { ascending: false });
-
-    if (projectsError || !projects || projects.length === 0) return [];
-
-    const projectIds = projects.map((p) => p.id);
-    const { data: media } = await supabase
-      .from("media")
-      .select("entity_id, url, order_index")
-      .eq("entity_type", "project")
-      .in("entity_id", projectIds)
-      .order("order_index", { ascending: true });
-
-    return projects.map((project) => ({
-      ...project,
-      hero_image: media?.find((m) => m.entity_id === project.id)?.url || null,
-    }));
+    const res = await fetch(`${host}/api/projects`, { cache: "no-store" });
+    if (!res.ok) return [];
+    return res.json();
   } catch (error) {
     console.error("Error fetching projects:", error);
     return [];
